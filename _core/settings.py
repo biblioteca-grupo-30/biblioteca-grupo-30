@@ -34,7 +34,9 @@ THIRD_PARTY_APPS = [
     "rest_framework",
 ]
 
-MY_APPS = []
+MY_APPS = [
+    "books",
+]
 
 
 DJANGO_APPS = [
