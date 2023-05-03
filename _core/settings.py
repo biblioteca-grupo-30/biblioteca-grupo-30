@@ -36,6 +36,7 @@ THIRD_PARTY_APPS = [
 
 MY_APPS = [
     "books",
+    "exemplaries",
 ]
 
 
@@ -110,6 +111,11 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 4,
+}
 
 
 # Internationalization
