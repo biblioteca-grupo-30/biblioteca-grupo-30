@@ -48,6 +48,12 @@ DJANGO_APPS = [
 
 INSTALLED_APPS = THIRD_PARTY_APPS + MY_APPS + DJANGO_APPS
 
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "loan.permissions.IsNotBlocked",
+    ],
+}
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
