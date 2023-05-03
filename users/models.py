@@ -18,3 +18,5 @@ class User(AbstractUser):
         default=StatusOptions.ACTIVE
     )
     is_superuser = models.BooleanField(default=False)
+
+    books_followed = models.ManyToManyField("books.Book", related_name="users")
