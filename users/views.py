@@ -5,9 +5,10 @@ from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView
 )
+from rest_framework.pagination import PageNumberPagination
 
 
-class UserView(ListCreateAPIView):
+class UserView(ListCreateAPIView, PageNumberPagination):
     authentication_classes = [JWTAuthentication]
 
     queryset = User.objects.all()
