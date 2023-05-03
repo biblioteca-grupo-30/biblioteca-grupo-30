@@ -37,6 +37,8 @@ THIRD_PARTY_APPS = [
 
 MY_APPS = [
     "users",
+    "books",
+    "exemplaries",
 ]
 
 
@@ -115,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=24),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
-}
+},
 
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
