@@ -30,9 +30,11 @@ class UserSerializer(serializers.ModelSerializer):
             "password",
             "is_blocked",
             "is_superuser",
+            "books_followed",
         ]
         extra_kwargs = {
             "password": {"write_only": True},
+            "books_followed": {"read_only": True},
             "is_blocked": {"default": False},
             "is_superuser": {"default": False},
         }

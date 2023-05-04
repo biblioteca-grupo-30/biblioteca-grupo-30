@@ -2,6 +2,7 @@ from .models import User
 from .serializers import UserSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.generics import (
+    CreateAPIView,
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView
 )
@@ -42,3 +43,13 @@ class UserDetailView(RetrieveUpdateDestroyAPIView):
         serializer.save()
 
         return Response(serializer.data, status.HTTP_200_OK)
+
+
+class FollowView(CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def perform_create(self, serializer):
+        user = get_object_or_404(User, pk=self.kwargs.get("pk"))
+        # AINDA ESTÁ INCOMPLETO
+        return super().perform_create(serializer)
