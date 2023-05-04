@@ -8,12 +8,12 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("books", "0001_initial"),
+        ("exemplaries", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name="Exemplary",
+            name="Loan",
             fields=[
                 (
                     "id",
@@ -24,13 +24,15 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("quantity", models.IntegerField()),
+                ("return_date", models.DateTimeField()),
+                ("returned_date", models.DateTimeField(blank=True, null=True)),
+                ("blocked_until", models.DateTimeField(blank=True, null=True)),
+                ("loan_date", models.DateTimeField(auto_now_add=True)),
                 (
-                    "book",
+                    "exemplary",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="exemplaries",
-                        to="books.book",
+                        to="exemplaries.exemplary",
                     ),
                 ),
             ],
