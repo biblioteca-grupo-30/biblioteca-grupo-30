@@ -11,17 +11,16 @@ from django.shortcuts import get_object_or_404
 
 
 class LoanListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Loan.objects.all()
-    serializer_class = LoanSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    queryset = Loan.objects.all()
+    serializer_class = LoanSerializer
+
     def perform_create(self, serializer):
-        exemplary = get_object_or_404(Exemplary, pk=serializer.
-                                      validated_data["exemplary"].id)
+        exemplary = get_object_or_404(Exemplary, pk=serializer.validated_data["exemplary"].id)
         user = self.request.user
-        duration = serializer.validated_data.get("duration", exemplary
-                                                 .default_loan_duration)
+        duration = serializer.validated_data.get("duration", exemplary.default_loan_duration)
 
         # Cria um objeto datetime com a data atual e adiciona a duração em dias
         return_date = timezone.now() + timedelta(days=duration)
@@ -40,8 +39,8 @@ class LoanListCreateAPIView(generics.ListCreateAPIView):
 
 
 class LoanRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Loan.objects.all()
-    serializer_class = LoanSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
-    ookup_field = "pk"
+
+    queryset = Loan.objects.all()
+    serializer_class = LoanSerializer
