@@ -7,7 +7,6 @@ class Book(models.Model):
     synopsis = models.CharField(max_length=200)
     category = models.CharField(max_length=20)
     pages = models.PositiveIntegerField()
-    is_avaiable = models.BooleanField(default=True)
 
     def __str__(self):
         return self.title
