@@ -1,5 +1,7 @@
 from rest_framework import permissions
+from rest_framework.views import Request, View
 from django.utils import timezone
+from books.models import Book
 from .models import Loan
 
 

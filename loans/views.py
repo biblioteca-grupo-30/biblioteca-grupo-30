@@ -3,6 +3,8 @@ from django.utils import timezone
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from exemplaries.models import Exemplary
 from .models import Loan
 from .serializers import LoanSerializer
 from django.shortcuts import get_object_or_404
@@ -11,13 +13,14 @@ from django.shortcuts import get_object_or_404
 class LoanListCreateAPIView(generics.ListCreateAPIView):
     queryset = Loan.objects.all()
     serializer_class = LoanSerializer
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        exemplare = get_object_or_404(Exemplare, pk=serializer.
-                                      validated_data["exemplare"].id)
+        exemplary = get_object_or_404(Exemplary, pk=serializer.
+                                      validated_data["exemplary"].id)
         user = self.request.user
-        duration = serializer.validated_data.get("duration", exemplare
+        duration = serializer.validated_data.get("duration", exemplary
                                                  .default_loan_duration)
 
         # Cria um objeto datetime com a data atual e adiciona a duração em dias
@@ -30,8 +33,15 @@ class LoanListCreateAPIView(generics.ListCreateAPIView):
 
         loan = serializer.save(user=user, return_date=return_date)
 
+        exemplary.quantity -= 1
+        exemplary.save()
+
+        return loan
+
 
 class LoanRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Loan.objects.all()
     serializer_class = LoanSerializer
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
+    ookup_field = "pk"
