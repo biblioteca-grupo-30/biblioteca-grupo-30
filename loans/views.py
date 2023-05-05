@@ -1,4 +1,5 @@
 from datetime import timedelta
+from django.forms import ValidationError
 from django.utils import timezone
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
@@ -20,14 +21,17 @@ class LoanListCreateAPIView(generics.ListCreateAPIView):
         exemplary = get_object_or_404(Exemplary, pk=serializer.
                                       validated_data["exemplary"].id)
         user = self.request.user
+
+        if Loan.objects.filter(user=user,
+                               exemplary__book=exemplary.book).exists():
+            raise ValidationError("Usuário já tem um exemplar \
+emprestado para este livro")
+
         duration = serializer.validated_data.get("duration", exemplary
                                                  .default_loan_duration)
 
-        # Cria um objeto datetime com a data atual e adiciona a duração em dias
         return_date = timezone.now() + timedelta(days=duration)
 
-        # Verifica se a data de retorno cai em um
-        # fim de semana e, se sim, define para o próximo dia útil
         if return_date.weekday() >= 5:
             return_date += timedelta(days=2)
 
@@ -44,4 +48,3 @@ class LoanRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LoanSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
-    ookup_field = "pk"
