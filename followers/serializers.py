@@ -1,11 +1,9 @@
 from rest_framework import serializers
 from .models import Follower
+from books.models import Book
 
 
-class FollowerSerializer(serializers.Serializer):
-    def create(self, validated_data: dict) -> Follower:
-        return Follower.objects.create(**validated_data)
-
+class FollowerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Follower
         fields = [
