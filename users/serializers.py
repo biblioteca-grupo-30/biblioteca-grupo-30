@@ -4,18 +4,13 @@ from .models import User
 
 class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data: dict) -> User:
-        is_superuser = validated_data.pop("is_superuser")
-
-        if is_superuser:
-            return User.objects.create_superuser(**validated_data)
-
-        return User.objects.create_user(**validated_data)
+        return User.objects.create_superuser(**validated_data)
 
     def update(self, instance: User, validated_data: dict) -> User:
         for key, value in validated_data.items():
             setattr(instance, key, value)
-            if key == "password":
-                instance.set_password(value)
+
+        instance.set_password(validated_data["password"])
 
         instance.save()
 
