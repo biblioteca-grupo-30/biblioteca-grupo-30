@@ -1,13 +1,28 @@
+from books.permissions import IsAuthenticatedOrReadOnly, IsUserAdmin
 from .models import Book
 from .serializers import BookSerializer
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-
+from rest_framework.generics import ListCreateAPIView, RetrieveAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class BookView(ListCreateAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
-class BookRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+class BookRetrieveView(RetrieveAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    lookup_field = "id"
+    lookup_field = "pk"
+
+class BookUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsUserAdmin, IsAuthenticatedOrReadOnly]
+
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    lookup_field = "pk"
+
