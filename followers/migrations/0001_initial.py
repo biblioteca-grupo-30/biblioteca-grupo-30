@@ -14,12 +14,10 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Exemplary',
+            name='Follower',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('quantity', models.IntegerField()),
-                ('default_loan_duration', models.IntegerField(default=7)),
-                ('book', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='exemplaries', to='books.book')),
+                ('book', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='book_followers', to='books.book')),
             ],
         ),
     ]

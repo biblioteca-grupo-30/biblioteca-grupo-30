@@ -38,5 +38,5 @@ class UserSerializer(serializers.ModelSerializer):
             "books_followed": {"read_only": True},
             "is_blocked": {"default": False},
             "is_superuser": {"default": False},
-
         }
+        depth = 2

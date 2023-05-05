@@ -12,5 +12,9 @@ class User(AbstractUser):
 
     books_followed = models.ManyToManyField(
         "books.Book",
-        related_name="users_following"
+        related_name="users_following",
+        through="followers.Follower"
     )
+
+    def __str__(self):
+        return self.username

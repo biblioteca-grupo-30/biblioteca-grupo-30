@@ -2,17 +2,22 @@ from .models import User
 from .serializers import UserSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.generics import (
+    ListAPIView,
     CreateAPIView,
-    ListCreateAPIView,
-    RetrieveUpdateDestroyAPIView
+    RetrieveUpdateDestroyAPIView,
 )
 from rest_framework.pagination import PageNumberPagination
-from django.shortcuts import get_object_or_404
-from rest_framework.views import Request, Response, status
+from books.permissions import IsUserAdmin
 
 
-class UserView(ListCreateAPIView, PageNumberPagination):
+class UserView(CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class ListUserView(ListAPIView):
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsUserAdmin]
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -20,36 +25,27 @@ class UserView(ListCreateAPIView, PageNumberPagination):
 
 class UserDetailView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsUserAdmin]
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-    lookup_url_kwarg = "pk"
+    lookup_field = "pk"
 
-    def get(self, request: Request, user_id: int) -> Response:
-        user = get_object_or_404(User, pk=user_id)
-        serializer = UserSerializer(user)
-        self.check_object_permissions(request, user)
-        return Response(serializer.data, status.HTTP_200_OK)
+    # def get(self, request: Request, user_id: int) -> Response:
+    #     user = get_object_or_404(User, pk=user_id)
+    #     serializer = UserSerializer(user)
+    #     self.check_object_permissions(request, user)
+    #     return Response(serializer.data, status.HTTP_200_OK)
 
-    def patch(self, request: Request, user_id: int) -> Response:
-        user = get_object_or_404(User, pk=user_id)
+    # def patch(self, request: Request, user_id: int) -> Response:
+    #     user = get_object_or_404(User, pk=user_id)
 
-        self.check_object_permissions(request, user)
+    #     self.check_object_permissions(request, user)
 
-        serializer = UserSerializer(user, request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
+    #     serializer = UserSerializer(user, request.data, partial=True)
+    #     serializer.is_valid(raise_exception=True)
 
-        serializer.save()
+    #     serializer.save()
 
-        return Response(serializer.data, status.HTTP_200_OK)
-
-
-class FollowView(CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-    def perform_create(self, serializer):
-        user = get_object_or_404(User, pk=self.kwargs.get("pk"))
-        # AINDA ESTÁ INCOMPLETO
-        return super().perform_create(serializer)
+    #     return Response(serializer.data, status.HTTP_200_OK)
