@@ -2,6 +2,7 @@ from django.urls import path
 from exemplaries.views import ExamplaryRetriveUpdate, ExemplaryView
 from .views import BookView, BookRetrieveView, BookUpdateDestroyView
 
+
 urlpatterns = [
     path("books/", BookView.as_view()),
     path("books/delete-update/<int:pk>/", BookUpdateDestroyView.as_view(), name="bookUpdateDestroyView"),
