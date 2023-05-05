@@ -10,7 +10,6 @@ class Loan(models.Model):
     returned_date = models.DateTimeField(blank=True, null=True)
     loan_date = models.DateTimeField(auto_now_add=True)
 
-
     def save(self, *args, **kwargs):
         if self.return_date.weekday() >= 5:
             self.return_date = self.return_date + timedelta(
