@@ -13,14 +13,14 @@ from django.shortcuts import get_object_or_404
 
 
 class LoanListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Loan.objects.all()
-    serializer_class = LoanSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    queryset = Loan.objects.all()
+    serializer_class = LoanSerializer
+
     def perform_create(self, serializer):
-        exemplary = get_object_or_404(Exemplary, pk=serializer.
-                                      validated_data["exemplary"].id)
+        exemplary = get_object_or_404(Exemplary, pk=serializer.validated_data["exemplary"].id)
         user = self.request.user
         book = exemplary.book
 
@@ -47,8 +47,6 @@ class LoanListCreateAPIView(generics.ListCreateAPIView):
 
 
 class LoanRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Loan.objects.all()
-    serializer_class = LoanSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
 
