@@ -2,7 +2,6 @@ from rest_framework import serializers
 from exemplaries.models import Exemplary
 from .models import Book
 
-
 class BookSerializer(serializers.ModelSerializer):
     is_available = serializers.SerializerMethodField()
 
