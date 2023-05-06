@@ -40,7 +40,7 @@ MY_APPS = [
     "books",
     "exemplaries",
     "loans",
-    "followers"
+    "followers",
 ]
 
 
