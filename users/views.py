@@ -32,20 +32,5 @@ class UserDetailView(RetrieveUpdateDestroyAPIView):
 
     lookup_field = "pk"
 
-    # def get(self, request: Request, user_id: int) -> Response:
-    #     user = get_object_or_404(User, pk=user_id)
-    #     serializer = UserSerializer(user)
-    #     self.check_object_permissions(request, user)
-    #     return Response(serializer.data, status.HTTP_200_OK)
 
-    # def patch(self, request: Request, user_id: int) -> Response:
-    #     user = get_object_or_404(User, pk=user_id)
-
-    #     self.check_object_permissions(request, user)
-
-    #     serializer = UserSerializer(user, request.data, partial=True)
-    #     serializer.is_valid(raise_exception=True)
-
-    #     serializer.save()
-
-    #     return Response(serializer.data, status.HTTP_200_OK)
+# class ListUserLoans()
