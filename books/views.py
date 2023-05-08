@@ -28,4 +28,3 @@ class BookUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     lookup_field = "pk"
-

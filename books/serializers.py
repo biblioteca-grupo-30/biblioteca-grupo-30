@@ -6,11 +6,17 @@ from .models import Book
 class BookSerializer(serializers.ModelSerializer):
     is_available = serializers.SerializerMethodField()
 
-
     class Meta:
         model = Book
-        fields = ["id", "title", "author", "pages", "synopsis", "category", "is_available"]
-
+        fields = [
+            "id",
+            "title",
+            "author",
+            "pages",
+            "synopsis",
+            "category",
+            "is_available"
+        ]
 
     def get_is_available(self, obj):
         available_count = Exemplary.objects.filter(book=obj, quantity__gt=0).count()
