@@ -13,12 +13,17 @@ from django.shortcuts import get_object_or_404
 
 
 class LoanListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Loan.objects.all()
+    serializer_class = LoanSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    queryset = Loan.objects.all()
+    serializer_class = LoanSerializer
+
     def perform_create(self, serializer):
-        exemplary = get_object_or_404(
-            Exemplary, pk=serializer.validated_data["exemplary"].id)
+        exemplary = get_object_or_404(Exemplary, pk=serializer.
+                                      validated_data["exemplary"].id)
         user = self.request.user
         book = exemplary.book
 
@@ -28,20 +33,19 @@ class LoanListCreateAPIView(generics.ListCreateAPIView):
                 "Usuário já tem um exemplar emprestado para este livro."
                 )
 
-        if Loan.objects.filter(user=user, exemplary__book=book,
-                               returned_date__isnull=False).exists():
+        duration = serializer.validated_data.get(
+            "duration", exemplary.default_loan_duration)
 
-            duration = serializer.validated_data.get(
-                "duration", exemplary.default_loan_duration)
+        return_date = timezone.now() + timedelta(days=duration)
+        if return_date.weekday() >= 5:
+            return_date += timedelta(days=2)
 
-            return_date = timezone.now() + timedelta(days=duration)
-            if return_date.weekday() >= 5:
-                return_date += timedelta(days=2)
-            loan = serializer.save(user=user, return_date=return_date)
-            exemplary.quantity -= 1
-            exemplary.save()
+        loan = serializer.save(user=user, return_date=return_date,
+                               returned_date=None)
+        exemplary.quantity -= 1
+        exemplary.save()
 
-            return loan
+        return loan
 
 
 class LoanRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -61,8 +65,10 @@ class LoanReturnAPIView(generics.UpdateAPIView):
         loan = self.get_object()
 
         if loan.returned_date is not None:
-            return Response({"detail": "Este exemplar já foi devolvido."},
-                            status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Este exemplar já foi devolvido."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         loan.returned_date = timezone.now()
         loan.save()
