@@ -16,6 +16,9 @@ class LoanListCreateAPIView(generics.ListCreateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    queryset = Loan.objects.all()
+    serializer_class = LoanSerializer
+
     def perform_create(self, serializer):
         exemplary = get_object_or_404(
             Exemplary, pk=serializer.validated_data["exemplary"].id)
