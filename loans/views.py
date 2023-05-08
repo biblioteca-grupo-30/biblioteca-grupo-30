@@ -51,6 +51,36 @@ class LoanRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+# RETORNAR PELO ID DO EMPRESTIMO
+
+
+# class LoanReturnAPIView(generics.UpdateAPIView):
+#     serializer_class = LoanSerializer
+#     authentication_classes = [JWTAuthentication]
+#     permission_classes = [IsAuthenticated]
+#     queryset = Loan.objects.all()
+
+#     def update(self, request, *args, **kwargs):
+#         loan = self.get_object()
+
+#         if loan.returned_date is not None:
+#             return Response(
+#                 {"detail": "Este exemplar já foi devolvido."},
+#                 status=status.HTTP_400_BAD_REQUEST,
+#             )
+
+#         loan.returned_date = timezone.now()
+#         loan.save()
+
+#         exemplary = loan.exemplary
+#         exemplary.quantity += 1
+#         exemplary.save()
+
+#         serializer = self.get_serializer(loan)
+#         return Response(serializer.data)
+
+
+# RETORNAR PELO ID DO EXEMPLAR
 
 class LoanReturnAPIView(generics.UpdateAPIView):
     serializer_class = LoanSerializer
@@ -59,23 +89,27 @@ class LoanReturnAPIView(generics.UpdateAPIView):
     queryset = Loan.objects.all()
 
     def update(self, request, *args, **kwargs):
-        loan = self.get_object()
+        exemplary_id = kwargs.get("exemplary_id")
+        exemplary = get_object_or_404(Exemplary, pk=exemplary_id)
 
-        if loan.returned_date is not None:
+        loan = Loan.objects.filter(
+            exemplary=exemplary,
+            user=request.user,
+            returned_date__isnull=True
+        ).first()
+
+        if not loan:
             return Response(
-                {"detail": "Este exemplar já foi devolvido."},
+                {"detail": "Este exemplar não \
+foi emprestado para este usuário."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         loan.returned_date = timezone.now()
         loan.save()
 
-        exemplary = loan.exemplary
         exemplary.quantity += 1
         exemplary.save()
 
         serializer = self.get_serializer(loan)
         return Response(serializer.data)
-        # da pra retornar o emprestimo e o reemprestimo mas
-        # nao pode o reemprestimo do reemprestimo
-        # resoler imediatamente 😳
