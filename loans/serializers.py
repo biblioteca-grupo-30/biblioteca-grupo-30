@@ -18,27 +18,65 @@ class LoanSerializer(serializers.ModelSerializer):
                         "user": {"read_only": True},
                         "id": {"read_only": True}}
 
-    # def create(self, validated_data):
-    #     exemplary = get_object_or_404(
-    #         Exemplary,
-    #         pk=validated_data["exemplary"].id
-    #     )
-    #     book = get_object_or_404(
-    #         Book,
-    #         pk=exemplary.id
-    #     )
+    def create(self, validated_data):
+        exemplary = get_object_or_404(
+            Exemplary,
+            pk=validated_data["exemplary"].id
+        )
+        book = get_object_or_404(
+            Book,
+            pk=exemplary.id
+        )
 
-    #     instance_updated = super().update(exemplary, validated_data)
-    #     quantity = instance_updated.quantity
+        instance_updated = super().update(exemplary, validated_data)
+        quantity = instance_updated.quantity
 
-    #     import ipdb
+        if quantity == 0:
+            send_mail_on_change(instance_updated, book.title, "indisponível")
 
-    #     if quantity == 0:
-    #         send_mail_on_change(instance_updated, book.title, "indisponível")
+        if quantity > 0:
+            send_mail_on_change(instance_updated, book.title, "disponível")
 
-    #     if quantity > 0:
-    #         send_mail_on_change(instance_updated, book.title, "disponível")
+        # return instance_updated
 
-    #     ipdb.set_trace()
+        return Loan.objects.create(**validated_data)
 
-    #     return instance_updated
+
+class ListLoanOwnerSerializer(serializers.Serializer):
+    class Meta:
+        model: Loan
+        fields = [
+            "id",
+            "exemplary",
+            "user",
+            "return_date",
+            "returned_date",
+            "loan_date",
+        ]
+
+        extra_kwargs = {
+            "return_date": {"read_only": True},
+            "loan_date": {"read_only": True},
+            "user": {"read_only": True},
+            "id": {"read_only": True},
+        }
+
+
+class ListLoanOwnerSerializer(serializers.Serializer):
+    class Meta:
+        model: Loan
+        fields = [
+            "id",
+            "exemplary",
+            "user",
+            "return_date",
+            "returned_date",
+            "loan_date",
+        ]
+
+        extra_kwargs = {
+            "return_date": {"read_only": True},
+            "loan_date": {"read_only": True},
+            "user": {"read_only": True},
+            "id": {"read_only": True},
+        }

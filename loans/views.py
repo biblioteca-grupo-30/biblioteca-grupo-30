@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from exemplaries.models import Exemplary
 from .models import Loan
+from books.permissions import IsUserAdmin, IsAuthenticatedOrReadOnly
 from .serializers import LoanSerializer
 from django.shortcuts import get_object_or_404
 
@@ -16,43 +17,42 @@ class LoanListCreateAPIView(generics.ListCreateAPIView):
     queryset = Loan.objects.all()
     serializer_class = LoanSerializer
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    queryset = Loan.objects.all()
-    serializer_class = LoanSerializer
+    permission_classes = [IsUserAdmin | IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
-        exemplary = get_object_or_404(Exemplary, pk=serializer.
-                                      validated_data["exemplary"].id)
+        exemplary = get_object_or_404(
+            Exemplary, pk=serializer.validated_data["exemplary"].id
+        )
         user = self.request.user
         book = exemplary.book
 
-        if Loan.objects.filter(user=user, exemplary__book=book,
-                               returned_date__isnull=True).exists():
+        if Loan.objects.filter(
+            user=user, exemplary__book=book, returned_date__isnull=True
+        ).exists():
             raise ValidationError(
                 "Usuário já tem um exemplar emprestado para este livro."
-                )
+            )
 
         duration = serializer.validated_data.get(
-            "duration", exemplary.default_loan_duration)
+            "duration", exemplary.default_loan_duration
+        )
 
         return_date = timezone.now() + timedelta(days=duration)
         if return_date.weekday() >= 5:
             return_date += timedelta(days=2)
 
-        loan = serializer.save(user=user, return_date=return_date,
-                               returned_date=None)
+        serializer.save(user=user, exemplary=exemplary, return_date=return_date, returned_date=None)
         exemplary.quantity -= 1
         exemplary.save()
-
-        return loan
 
 
 class LoanRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Loan.objects.all()
     serializer_class = LoanSerializer
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
+    lookup_url_kwarg = "pk"
 
 
 class LoanReturnAPIView(generics.UpdateAPIView):
@@ -79,3 +79,14 @@ class LoanReturnAPIView(generics.UpdateAPIView):
 
         serializer = self.get_serializer(loan)
         return Response(serializer.data)
+
+
+class ListLoanOwner(generics.ListAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    queryset = Loan.objects.all()
+    serializer_class = LoanSerializer
+
+    def get_queryset(self):
+        return Loan.objects.filter(user=self.request.user)
