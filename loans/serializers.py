@@ -42,3 +42,23 @@ class LoanSerializer(serializers.ModelSerializer):
     #     ipdb.set_trace()
 
     #     return instance_updated
+
+
+class ListLoanOwnerSerializer(serializers.Serializer):
+    class Meta:
+        model: Loan
+        fields = [
+            "id",
+            "exemplary",
+            "user",
+            "return_date",
+            "returned_date",
+            "loan_date",
+        ]
+
+        extra_kwargs = {
+            "return_date": {"read_only": True},
+            "loan_date": {"read_only": True},
+            "user": {"read_only": True},
+            "id": {"read_only": True},
+        }
