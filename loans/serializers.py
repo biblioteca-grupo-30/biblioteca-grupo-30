@@ -18,27 +18,23 @@ class LoanSerializer(serializers.ModelSerializer):
                         "user": {"read_only": True},
                         "id": {"read_only": True}}
 
-    # def create(self, validated_data):
-    #     exemplary = get_object_or_404(
-    #         Exemplary,
-    #         pk=validated_data["exemplary"].id
-    #     )
-    #     book = get_object_or_404(
-    #         Book,
-    #         pk=exemplary.id
-    #     )
+    def create(self, validated_data):
+        exemplary = get_object_or_404(
+            Exemplary,
+            pk=validated_data["exemplary"].id
+        )
+        book = get_object_or_404(
+            Book,
+            pk=exemplary.id
+        )
 
-    #     instance_updated = super().update(exemplary, validated_data)
-    #     quantity = instance_updated.quantity
+        instance_updated = super().update(exemplary, validated_data)
+        quantity = instance_updated.quantity
 
-    #     import ipdb
+        if quantity == 0:
+            send_mail_on_change(instance_updated, book.title, "indisponível")
 
-    #     if quantity == 0:
-    #         send_mail_on_change(instance_updated, book.title, "indisponível")
+        if quantity > 0:
+            send_mail_on_change(instance_updated, book.title, "disponível")
 
-    #     if quantity > 0:
-    #         send_mail_on_change(instance_updated, book.title, "disponível")
-
-    #     ipdb.set_trace()
-
-    #     return instance_updated
+        return instance_updated
