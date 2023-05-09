@@ -26,7 +26,7 @@ class BookRetrieveView(RetrieveAPIView):
 
 class BookUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsUserAdmin, IsAuthenticatedOrReadOnly]
+    permission_classes = [IsUserAdmin]
 
     queryset = Book.objects.all()
     serializer_class = BookSerializer

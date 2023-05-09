@@ -41,18 +41,18 @@ class LoanListCreateAPIView(generics.ListCreateAPIView):
         if return_date.weekday() >= 5:
             return_date += timedelta(days=2)
 
-        loan = serializer.save(user=user, return_date=return_date, returned_date=None)
+        serializer.save(user=user, exemplary=exemplary, return_date=return_date, returned_date=None)
         exemplary.quantity -= 1
         exemplary.save()
-
-        return loan
 
 
 class LoanRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Loan.objects.all()
     serializer_class = LoanSerializer
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
+    lookup_url_kwarg = "pk"
 
 
 class LoanReturnAPIView(generics.UpdateAPIView):

@@ -37,7 +37,9 @@ class LoanSerializer(serializers.ModelSerializer):
         if quantity > 0:
             send_mail_on_change(instance_updated, book.title, "disponível")
 
-        return instance_updated
+        # return instance_updated
+
+        return Loan.objects.create(**validated_data)
 
 
 class ListLoanOwnerSerializer(serializers.Serializer):
