@@ -43,6 +43,7 @@ if RENDER_EXTERNAL_HOSTNAME:
 
 THIRD_PARTY_APPS = [
     "rest_framework",
+    "drf_spectacular",
 ]
 
 MY_APPS = [
@@ -155,6 +156,15 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "users.permissions.IsNotBlocked",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "BiblioteKa",
+    "DESCRIPTION": "A biblioteca é uma ferramenta projetada para gerenciar e organizar informações relacionadas a livros. Com ela, é possível catalogar obras, acompanhar empréstimos e controlar o estoque de exemplares disponíveis. A biblioteca é fácil de usar e pode ser personalizada para atender às necessidades específicas de cada usuário. Com essa ferramenta, os usuários podem manter um registro completo de sua coleção de livros e garantir que nunca percam o controle sobre suas publicações favoritas.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    # OTHER SETTINGS
 }
 
 # Internationalization

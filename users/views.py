@@ -31,6 +31,3 @@ class UserDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
 
     lookup_field = "pk"
-
-
-# class ListUserLoans()
