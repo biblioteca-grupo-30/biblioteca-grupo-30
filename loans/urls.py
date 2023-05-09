@@ -3,7 +3,8 @@ from .views import (
     LoanListCreateAPIView,
     LoanRetrieveUpdateDestroyAPIView,
     LoanReturnAPIView,
-    ListLoanOwner)
+    ListLoanOwner
+)
 
 urlpatterns = [
     path("loan/", LoanListCreateAPIView.as_view()),
