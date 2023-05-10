@@ -15,6 +15,17 @@ class FollowerListCreateView(ListCreateAPIView):
     queryset = Follower.objects.all()
     serializer_class = FollowerSerializer
 
+    def post(self, request, *args, **kwargs):
+        try:
+            book = get_object_or_404(Book, pk=self.kwargs.get("pk"))
+            user = self.request.user
+            user_following = Follower.objects.get(pk=user.id)
+            if user_following.user_id == user.id and user_following.book_id == book.id:
+                raise ValueError("Você já está seguindo este livro.")
+
+        except Follower.DoesNotExist:
+            return super().post(request, *args, **kwargs)
+
     def perform_create(self, serializer):
         book = get_object_or_404(Book, pk=self.kwargs.get("pk"))
         user = self.request.user
