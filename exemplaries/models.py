@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Exemplary(models.Model):
-    quantity = models.IntegerField()
+    quantity = models.PositiveIntegerField()
     default_loan_duration = models.IntegerField(default=7)
 
     book = models.ForeignKey(

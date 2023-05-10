@@ -9,6 +9,13 @@ class ExemplarySerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return Exemplary.objects.create(**validated_data)
 
+    def validate_quantity(self, value):
+        if value <= 0:
+            raise serializers.ValidationError(
+                "Quantidade de exemplares precisa ser maior que 0"
+            )
+        return value
+
     class Meta:
         model = Exemplary
         fields = ["id", "quantity", "book_id"]
