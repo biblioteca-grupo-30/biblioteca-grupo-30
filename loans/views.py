@@ -11,6 +11,8 @@ from .models import Loan
 from books.permissions import IsUserAdmin, IsAuthenticatedOrReadOnly
 from .serializers import LoanSerializer
 from django.shortcuts import get_object_or_404
+from books.models import Book
+from followers.utils import send_mail_on_change
 
 
 class LoanListCreateAPIView(generics.ListCreateAPIView):
@@ -72,12 +74,25 @@ class LoanReturnAPIView(generics.UpdateAPIView):
 
         loan.returned_date = timezone.now()
         loan.save()
-
         exemplary = loan.exemplary
         exemplary.quantity += 1
         exemplary.save()
 
+        exemplary = get_object_or_404(
+            Exemplary,
+            pk=exemplary.id
+        )
+
+        book = get_object_or_404(
+            Book,
+            pk=exemplary.book_id
+        )
+
+        if exemplary.quantity > 0:
+            send_mail_on_change(loan, book.title, "disponível")
+
         serializer = self.get_serializer(loan)
+
         return Response(serializer.data)
 
 
