@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import Follower
-from books.models import Book
 
 
 class FollowerSerializer(serializers.ModelSerializer):

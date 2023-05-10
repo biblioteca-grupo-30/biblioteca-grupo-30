@@ -6,7 +6,6 @@ from rest_framework.generics import (
     CreateAPIView,
     RetrieveUpdateDestroyAPIView,
 )
-from rest_framework.pagination import PageNumberPagination
 from books.permissions import IsUserAdmin
 
 

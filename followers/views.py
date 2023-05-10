@@ -1,7 +1,6 @@
 from rest_framework.generics import ListCreateAPIView
 from .models import Follower
 from books.models import Book
-from users.models import User
 from .serializers import FollowerSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.authentication import JWTAuthentication
