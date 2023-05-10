@@ -61,7 +61,6 @@ class LoanReturnAPIView(generics.UpdateAPIView):
     serializer_class = LoanSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    serializer_class = LoanSerializer
     queryset = Loan.objects.all()
 
     def update(self, request, *args, **kwargs):

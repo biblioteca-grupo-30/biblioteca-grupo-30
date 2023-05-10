@@ -7,33 +7,34 @@ from django.shortcuts import get_object_or_404
 
 
 class LoanSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Loan
-        fields = ["id", "exemplary", "user", "return_date",
-                  "returned_date", "loan_date"]
+        fields = [
+            "id",
+            "exemplary",
+            "user",
+            "return_date",
+            "returned_date",
+            "loan_date",
+        ]
 
-        extra_kwargs = {"return_date": {"read_only": True},
-                        "loan_date": {"read_only": True},
-                        "user": {"read_only": True},
-                        "id": {"read_only": True}}
+        extra_kwargs = {
+            "return_date": {"read_only": True},
+            "loan_date": {"read_only": True},
+            "user": {"read_only": True},
+            "id": {"read_only": True},
+        }
 
     def create(self, validated_data):
-        exemplary = get_object_or_404(
-            Exemplary,
-            pk=validated_data["exemplary"].id
-        )
-        book = get_object_or_404(
-            Book,
-            pk=exemplary.id
-        )
+        exemplary = get_object_or_404(Exemplary, pk=validated_data["exemplary"].id)
+        book = get_object_or_404(Book, pk=exemplary.id)
 
         instance_updated = super().update(exemplary, validated_data)
         quantity_unavailable = instance_updated.quantity - 1
 
         if quantity_unavailable < 1:
             send_mail_on_change(instance_updated, book.title, "indisponível")
-    
+
         return Loan.objects.create(**validated_data)
 
 
